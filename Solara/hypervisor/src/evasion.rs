@@ -17,6 +17,26 @@ use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 use std::time::{SystemTime, UNIX_EPOCH};
 use obfstr::obfstr;
 
+// Import types from other modules - SECURITY IMPROVEMENT: Use specific imports instead of wildcard
+use crate::anti_forensics::{
+    LogInjection, SyslogFacility, LogRotation, LogParser, FilterAction,
+    FakeEvent, InjectionTiming, LogFormat, EventFilter, MessageFilter, ContentFilter,
+    ValueFilter, ValueEncryption, FileAttributeManager, StreamEncryption, StreamCompression,
+    ClockSkew, DnsHijacking, HostsFileManipulation, ProxyManipulation, ProxySettings,
+    DnsCacheManipulation, PacFileManipulation, TransparentProxy, WinsockHijacking,
+    SocketInterception, LspChain, ProtocolDatabase, TimeDrift, TimezoneSpoofing,
+    ChronologyManipulation, TimeDistortion, RhythmManipulation, DeletionVerification,
+    DestructionSchedule, SecureBootBypass, SsdtInjection, DllHijacking, ServiceHijacking,
+    FileAssociationHijacking, SearchOrderManipulation, SystemFileReplacement,
+    ValueHijacking, HandlerRedirection, HandlerTable, InterfaceManipulation,
+    IntegrityBypass, ExecutionFlow, PayloadInjection, DependencyManipulation,
+    PartitionTable, PciEnumeration, ShadowRamUsage, EvasionSample, GradientMasking,
+    NoiseParameters, PatternLibrary, SyntheticDataGenerator, LabelManipulation,
+    ConstraintSatisfaction, ConstraintRelaxation, OptimizationInterference,
+    ConvergenceDisruption, MagnitudeControl, PerceptualConstraints, QualityMetrics,
+    RealismMetrics, PlausibilityChecker, IndependenceMetrics, SeedManagement
+};
+
 /// Unified evasion system combining all evasion techniques
 #[derive(Debug, Clone)]
 pub struct UnifiedEvasionSystem {
@@ -2109,9 +2129,7 @@ struct InterceptedSocket;
 struct DnsCacheEntry;
 struct HostsEntry;
 struct ProxyRule;
-struct EventFilter;
-struct MessageFilter;
-struct ContentFilter;
+// EventFilter, MessageFilter, and ContentFilter are imported from anti_forensics module
 struct CustomLog;
 struct VirtualKey;
 struct RegistryAccess;
@@ -2132,7 +2150,7 @@ struct EvidenceTemplate;
 struct GenerationRule;
 struct ImageFilter;
 struct CleaningProfile;
-struct FakeEvent;
+// FakeEvent is imported from anti_forensics module
 struct RegistryValue;
 struct HijackedValue;
 struct TemporalPattern;
@@ -2295,25 +2313,7 @@ enum ReorderStrategy {
     Custom(Vec<usize>),
 }
 
-enum FilterAction {
-    Block,
-    Modify,
-    Redirect,
-    Log,
-}
-
-enum InjectionTiming {
-    Immediate,
-    Delayed(u64),
-    Random,
-}
-
-enum LogFormat {
-    Text,
-    Json,
-    Xml,
-    Binary,
-}
+// FilterAction, InjectionTiming, and LogFormat are imported from anti_forensics module
 
 enum ValueType {
     String,

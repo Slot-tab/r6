@@ -177,9 +177,17 @@ impl WebBridge {
                         }
 
                         // Broadcast config update to all connected clients
+                        // SECURITY IMPROVEMENT: Replace unwrap() with proper error handling
+                        let data = match serde_json::to_value(&new_config) {
+                            Ok(value) => value,
+                            Err(e) => {
+                                error!("Failed to serialize config update: {}", e);
+                                return Err(e.into());
+                            }
+                        };
                         let message = WebMessage {
                             message_type: "config_update".to_string(),
-                            data: serde_json::to_value(&new_config).unwrap(),
+                            data,
                         };
                         
                         Self::broadcast_to_clients(&clients, &message).await;
@@ -232,8 +240,9 @@ impl WebBridge {
             .or(static_files)
             .with(cors);
 
-        println!("🌐 Web Bridge starting on http://localhost:8080");
-        println!("📱 SolaraWeb UI available at http://localhost:8080/Menu/");
+        // SECURITY IMPROVEMENT: Use logging instead of println! to avoid information disclosure
+        info!("Web Bridge starting on localhost:8080");
+        info!("SolaraWeb UI available at localhost:8080/Menu/");
 
         warp::serve(routes)
             .run(([127, 0, 0, 1], 8080))
@@ -261,7 +270,8 @@ impl WebBridge {
                     if msg.is_text() {
                         if let Ok(text) = msg.to_str() {
                             if let Ok(web_msg) = serde_json::from_str::<WebMessage>(text) {
-                                println!("📨 Received WebSocket message: {}", web_msg.message_type);
+                                // SECURITY IMPROVEMENT: Use debug logging instead of println!
+                                debug!("Received WebSocket message: {}", web_msg.message_type);
                                 
                                 // Handle different message types
                                 match web_msg.message_type.as_str() {
@@ -277,10 +287,10 @@ impl WebBridge {
                                     },
                                     "config_change" => {
                                         // Handle real-time configuration changes
-                                        println!("⚙️ Configuration change received");
+                                        debug!("Configuration change received");
                                     },
                                     _ => {
-                                        println!("❓ Unknown message type: {}", web_msg.message_type);
+                                        debug!("Unknown message type: {}", web_msg.message_type);
                                     }
                                 }
                             }
@@ -323,9 +333,17 @@ impl WebBridge {
         }
 
         // Broadcast status update to all connected clients
+        // SECURITY IMPROVEMENT: Replace unwrap() with proper error handling
+        let data = match serde_json::to_value(&new_status) {
+            Ok(value) => value,
+            Err(e) => {
+                error!("Failed to serialize status update: {}", e);
+                return;
+            }
+        };
         let message = WebMessage {
             message_type: "status_update".to_string(),
-            data: serde_json::to_value(&new_status).unwrap(),
+            data,
         };
         
         Self::broadcast_to_clients(&self.clients, &message).await;

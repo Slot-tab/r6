@@ -4,8 +4,13 @@
 
 use core::mem;
 
-unsafe impl Send for GameOffsets {}
-unsafe impl Sync for GameOffsets {}
+// SECURITY IMPROVEMENT: Add safety documentation for thread safety implementations
+unsafe impl Send for GameOffsets {
+    // SAFETY: GameOffsets contains only integer offsets and is safe to move between threads
+}
+unsafe impl Sync for GameOffsets {
+    // SAFETY: GameOffsets is read-only after initialization and safe for concurrent access
+}
 
 pub struct GameOffsets {
     player_manager: u64,

