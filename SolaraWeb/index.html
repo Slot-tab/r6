@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link href="Main Page/_app/immutable/assets/Toaster.DKF17Rty.css" rel="stylesheet">
+    <link href="Main Page/_app/immutable/assets/sonner.D-t0946E.css" rel="stylesheet">
+    <link href="Main Page/_app/immutable/assets/2.D8V3eyTD.css" rel="stylesheet">
+    <link href="Main Page/_app/immutable/assets/progress.C6u19ZhB.css" rel="stylesheet">
+    
+    <style>
+        /* Page fade transition */
+        .page-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: hsl(var(--background));
+            z-index: 9999;
+            opacity: 1;
+            pointer-events: all;
+            transition: opacity 400ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .page-transition.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .page-content {
+            opacity: 0;
+            transition: opacity 400ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .page-content.fade-out {
+            opacity: 0;
+        }
+    </style>
+    
+    <script>
+        (function setInitialMode({ defaultMode = "system", themeColors: themeColors2, darkClassNames: darkClassNames2 = ["dark"], lightClassNames: lightClassNames2 = [], defaultTheme = "", modeStorageKey: modeStorageKey2 = "mode-watcher-mode", themeStorageKey: themeStorageKey2 = "mode-watcher-theme" }) {
+            const rootEl = document.documentElement;
+            const mode = localStorage.getItem(modeStorageKey2) || defaultMode;
+            const theme2 = localStorage.getItem(themeStorageKey2) || defaultTheme;
+            const light = mode === "light" || mode === "system" && window.matchMedia("(prefers-color-scheme: light)").matches;
+            if (light) {
+                if (darkClassNames2.length)
+                    rootEl.classList.remove(...darkClassNames2);
+                if (lightClassNames2.length)
+                    rootEl.classList.add(...lightClassNames2);
+            } else {
+                if (lightClassNames2.length)
+                    rootEl.classList.remove(...lightClassNames2);
+                if (darkClassNames2.length)
+                    rootEl.classList.add(...darkClassNames2);
+            }
+            rootEl.style.colorScheme = light ? "light" : "dark";
+            if (themeColors2) {
+                const themeMetaEl = document.querySelector('meta[name="theme-color"]');
+                if (themeMetaEl) {
+                    themeMetaEl.setAttribute("content", mode === "light" ? themeColors2.light : themeColors2.dark);
+                }
+            }
+            if (theme2) {
+                rootEl.setAttribute("data-theme", theme2);
+                localStorage.setItem(themeStorageKey2, theme2);
+            }
+            localStorage.setItem(modeStorageKey2, mode);
+        })({ "defaultMode": "dark", "darkClassNames": ["dark"], "lightClassNames": [], "defaultTheme": "", "modeStorageKey": "mode-watcher-mode", "themeStorageKey": "mode-watcher-theme" });
+    </script>
+</head>
+<body class="dark" data-sveltekit-preload-data="hover">
+    <!-- Page transition overlay -->
+    <div class="page-transition" id="pageTransition"></div>
+    
+    <div style="display: contents" class="page-content" id="pageContent">
+        <div class="min-h-screen flex flex-col svelte-vavj46">
+            <main class="flex-1 svelte-vavj46">
+                <div class="flex items-center justify-center" style="height: calc(100vh - 0px);">
+                    <div class="relative w-full max-w-md">
+                        <div class="absolute -top-24 left-0 right-0 z-10 flex min-h-[5rem] items-end">
+                            <!-- Progress indicator placeholder -->
+                        </div>
+                        
+                        <div class="bg-card text-card-foreground rounded-xl border shadow-md">
+                            <div class="flex flex-col space-y-1.5 p-6 pb-3">
+                                <div role="heading" aria-level="3" class="tracking-tight text-2xl font-bold">
+                                    Access Loader
+                                </div>
+                                <p class="text-muted-foreground text-sm">
+                                    Enter your license code to access the loader
+                                </p>
+                            </div>
+                            
+                            <div class="p-6 pt-0 pb-6">
+                                <form class="space-y-4" id="access-form">
+                                    <div class="space-y-3">
+                                        <div class="text-sm font-medium leading-none">Build Type</div>
+                                        
+                                        <div class="flex rounded-lg border border-border bg-muted/30 p-1">
+                                            <button type="button" id="build-stable" class="flex-1 rounded-md px-3 py-2 text-sm font-medium transition-all duration-200 bg-background text-foreground shadow-sm">
+                                                <div class="flex items-center justify-center gap-1.5">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5">
+                                                        <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path>
+                                                    </svg>
+                                                    <span>Stable</span>
+                                                </div>
+                                            </button>
+                                        </div>
+                                        
+                                        <div class="min-h-[60px]">
+                                            <div class="rounded-md border border-green-200 bg-green-50/50 p-3 dark:border-green-800/50 dark:bg-green-950/20">
+                                                <div class="flex items-start gap-2">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-green-600 dark:text-green-400">
+                                                        <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path>
+                                                    </svg>
+                                                    <div>
+                                                        <p class="text-xs font-medium text-green-800 dark:text-green-200">Stable release build</p>
+                                                        <p class="mt-0.5 text-xs text-green-700/80 dark:text-green-300/80">Thoroughly tested and recommended for most users</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="space-y-2">
+                                        <label for="license-code" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">License Code</label>
+                                        <input class="border-input placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-base shadow-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm transition-all duration-200" type="text" value="" id="license-code" placeholder="Enter your license code">
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <div class="items-center p-6 flex justify-between pt-0">
+                                <button id="clear-btn" class="focus-visible:ring-ring inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground border shadow-sm h-9 px-4 py-2 min-w-[90px]" type="button">
+                                    Clear
+                                </button>
+                                
+                                <button id="access-btn" class="focus-visible:ring-ring inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 shadow h-9 px-4 py-2 relative min-w-[120px]" type="button">
+                                    <span class="flex items-center gap-2">
+                                        Access
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        // License validation and access functionality
+        class AccessApp {
+            constructor() {
+                this.validLicenseCode = 'test';
+                this.init();
+            }
+            
+            init() {
+                this.bindEvents();
+                this.validateLicenseCode(''); // Initialize form state
+            }
+            
+            bindEvents() {
+                // Form events
+                document.getElementById('clear-btn').addEventListener('click', () => this.clearForm());
+                document.getElementById('access-btn').addEventListener('click', () => this.accessLoader());
+                
+                // License code input validation
+                document.getElementById('license-code').addEventListener('input', (e) => this.validateLicenseCode(e.target.value));
+                
+                // Form submission
+                document.getElementById('access-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.accessLoader();
+                });
+            }
+            
+            clearForm() {
+                document.getElementById('license-code').value = '';
+                this.validateLicenseCode('');
+            }
+            
+            validateLicenseCode(code) {
+                const accessBtn = document.getElementById('access-btn');
+                const clearBtn = document.getElementById('clear-btn');
+                
+                if (code.trim().length > 0) {
+                    accessBtn.disabled = false;
+                    clearBtn.disabled = false;
+                    accessBtn.className = accessBtn.className.replace(' disabled:pointer-events-none disabled:opacity-50', '');
+                    clearBtn.className = clearBtn.className.replace(' disabled:pointer-events-none disabled:opacity-50', '');
+                } else {
+                    accessBtn.disabled = true;
+                    clearBtn.disabled = true;
+                    if (!accessBtn.className.includes('disabled:pointer-events-none disabled:opacity-50')) {
+                        accessBtn.className += ' disabled:pointer-events-none disabled:opacity-50';
+                        clearBtn.className += ' disabled:pointer-events-none disabled:opacity-50';
+                    }
+                }
+            }
+            
+            accessLoader() {
+                const code = document.getElementById('license-code').value.trim();
+                if (!code) return;
+                
+                const accessBtn = document.getElementById('access-btn');
+                const originalContent = accessBtn.innerHTML;
+                
+                // Show loading state
+                accessBtn.innerHTML = `
+                    <span class="flex items-center gap-2">
+                        <svg class="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12a9 9 0 11-6.219-8.56"/>
+                        </svg>
+                        Verifying...
+                    </span>
+                `;
+                accessBtn.disabled = true;
+                
+                // Simulate license verification
+                setTimeout(() => {
+                    if (code === this.validLicenseCode) {
+                        // Valid license - redirect to menu with page transition
+                        this.showToast('License validated successfully! Redirecting...', 'success');
+                        setTimeout(() => {
+                            this.navigateToMenu();
+                        }, 1000);
+                    } else {
+                        // Invalid license
+                        accessBtn.innerHTML = originalContent;
+                        accessBtn.disabled = false;
+                        this.showToast('Invalid license code. Please try again.', 'error');
+                        
+                        // Shake animation for invalid input
+                        const input = document.getElementById('license-code');
+                        input.style.animation = 'shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97)';
+                        setTimeout(() => {
+                            input.style.animation = '';
+                        }, 500);
+                    }
+                }, 1500);
+            }
+            
+            showToast(message, type = 'info') {
+                // Remove any existing toasts
+                document.querySelectorAll('.toast-notification').forEach(existingToast => {
+                    existingToast.remove();
+                });
+                
+                const toast = document.createElement('div');
+                toast.className = `toast-notification fixed top-16 right-4 z-50 rounded-lg border p-4 shadow-lg transition-all duration-300 ${
+                    type === 'success' ? 'bg-green-50 border-green-200 text-green-800 dark:bg-green-950 dark:border-green-800 dark:text-green-200' :
+                    type === 'error' ? 'bg-red-50 border-red-200 text-red-800 dark:bg-red-950 dark:border-red-800 dark:text-red-200' :
+                    'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-950 dark:border-blue-800 dark:text-blue-200'
+                }`;
+                
+                // Start positioned off-screen to the right
+                toast.style.transform = 'translateX(100%)';
+                
+                toast.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-medium">${message}</span>
+                        <button onclick="this.parentElement.parentElement.remove()" class="ml-2 text-xs opacity-70 hover:opacity-100">✕</button>
+                    </div>
+                `;
+                
+                document.body.appendChild(toast);
+                
+                // Animate slide in from right
+                setTimeout(() => {
+                    toast.style.transform = 'translateX(0)';
+                }, 10);
+                
+                // Auto dismiss with slide out animation
+                setTimeout(() => {
+                    if (toast.parentElement) {
+                        toast.style.transform = 'translateX(100%)';
+                        setTimeout(() => {
+                            if (toast.parentElement) {
+                                toast.remove();
+                            }
+                        }, 300);
+                    }
+                }, 5000);
+            }
+            
+            navigateToMenu() {
+                const transition = document.getElementById('pageTransition');
+                const content = document.getElementById('pageContent');
+                
+                // Start fade out
+                content.style.opacity = '0';
+                transition.style.opacity = '1';
+                transition.style.pointerEvents = 'all';
+                
+                // Navigate after fade out completes
+                setTimeout(() => {
+                    window.location.href = './Menu/index.html';
+                }, 400);
+            }
+        }
+        
+        // Optimized smooth gliding cursor effect
+        class SmoothCursor {
+            constructor(inputElement, glideTime = 180) {
+                this.input = inputElement;
+                this.glideTime = glideTime;
+                this.blinkTimeout = null;
+                this.lastInputTime = 0;
+                this.animationFrame = null;
+                this.measureSpan = null;
+                this.init();
+            }
+            
+            init() {
+                // Create wrapper for smooth cursor animation
+                this.wrapper = document.createElement('div');
+                this.wrapper.style.position = 'relative';
+                this.wrapper.style.display = 'inline-block';
+                this.wrapper.style.width = '100%';
+                
+                // Insert wrapper
+                this.input.parentNode.insertBefore(this.wrapper, this.input);
+                this.wrapper.appendChild(this.input);
+                
+                // Create reusable measurement span (performance optimization)
+                this.measureSpan = document.createElement('span');
+                this.measureSpan.style.position = 'absolute';
+                this.measureSpan.style.visibility = 'hidden';
+                this.measureSpan.style.whiteSpace = 'pre';
+                this.measureSpan.style.font = window.getComputedStyle(this.input).font;
+                this.measureSpan.style.top = '-9999px';
+                document.body.appendChild(this.measureSpan);
+                
+                // Create custom cursor
+                this.cursor = document.createElement('div');
+                this.cursor.style.position = 'absolute';
+                this.cursor.style.top = '50%';
+                this.cursor.style.width = '1px';
+                this.cursor.style.height = '1em';
+                this.cursor.style.backgroundColor = 'currentColor';
+                this.cursor.style.transform = 'translateY(-50%)';
+                this.cursor.style.transition = `left ${this.glideTime}ms cubic-bezier(0.23, 1, 0.32, 1)`;
+                this.cursor.style.animation = 'blink 1.4s infinite';
+                this.cursor.style.pointerEvents = 'none';
+                this.cursor.style.zIndex = '1';
+                this.wrapper.appendChild(this.cursor);
+                
+                // Hide native cursor
+                this.input.style.caretColor = 'transparent';
+                
+                // Optimized event listeners
+                this.input.addEventListener('input', () => this.handleInput(), { passive: true });
+                this.input.addEventListener('focus', () => this.updateCursorPosition(false), { passive: true });
+                this.input.addEventListener('click', () => this.updateCursorPosition(false), { passive: true });
+                this.input.addEventListener('keyup', () => this.updateCursorPosition(false), { passive: true });
+                
+                // Initial position
+                this.updateCursorPosition(false);
+            }
+            
+            stopBlinking() {
+                this.cursor.style.animation = 'none';
+                this.cursor.style.opacity = '1';
+            }
+            
+            startBlinking() {
+                // Clear any existing timeout
+                if (this.blinkTimeout) {
+                    clearTimeout(this.blinkTimeout);
+                }
+                
+                // Only start blinking if no recent input activity
+                const timeSinceLastInput = Date.now() - this.lastInputTime;
+                const delay = Math.max(0, 400 - timeSinceLastInput); // Adaptive delay
+                
+                this.blinkTimeout = setTimeout(() => {
+                    // Double-check no recent activity before starting blink
+                    if (Date.now() - this.lastInputTime >= 400) {
+                        this.cursor.style.animation = 'blink 1.4s infinite';
+                    }
+                }, delay);
+            }
+            
+            handleInput() {
+                this.lastInputTime = Date.now();
+                
+                // Cancel any pending blink restart
+                if (this.blinkTimeout) {
+                    clearTimeout(this.blinkTimeout);
+                    this.blinkTimeout = null;
+                }
+                
+                // Stop blinking immediately for rapid input
+                this.stopBlinking();
+                
+                // Cancel any pending cursor update to prevent stacking
+                if (this.animationFrame) {
+                    cancelAnimationFrame(this.animationFrame);
+                }
+                
+                // Use requestAnimationFrame for smooth updates
+                this.animationFrame = requestAnimationFrame(() => {
+                    this.updateCursorPosition(true);
+                    this.animationFrame = null;
+                });
+            }
+            
+            updateCursorPosition(fromInput = false) {
+                const text = this.input.value;
+                const cursorPos = this.input.selectionStart || text.length;
+                
+                // Use reusable span for better performance
+                this.measureSpan.textContent = text.substring(0, cursorPos);
+                const textWidth = this.measureSpan.getBoundingClientRect().width;
+                
+                // Get input padding (cached for performance)
+                if (!this.paddingLeft) {
+                    const inputStyles = window.getComputedStyle(this.input);
+                    this.paddingLeft = parseInt(inputStyles.paddingLeft) || 0;
+                }
+                
+                // Update cursor position with optimized transition
+                const newLeft = `${this.paddingLeft + textWidth}px`;
+                
+                // Skip redundant updates
+                if (this.cursor.style.left !== newLeft) {
+                    this.cursor.style.left = newLeft;
+                }
+                
+                // Start blinking after movement completes (only for input events)
+                if (fromInput) {
+                    // Use shorter delay for better responsiveness
+                    setTimeout(() => {
+                        this.startBlinking();
+                    }, this.glideTime + 50);
+                }
+            }
+            
+            // Cleanup method
+            destroy() {
+                if (this.measureSpan && this.measureSpan.parentNode) {
+                    this.measureSpan.parentNode.removeChild(this.measureSpan);
+                }
+                if (this.blinkTimeout) {
+                    clearTimeout(this.blinkTimeout);
+                }
+                if (this.animationFrame) {
+                    cancelAnimationFrame(this.animationFrame);
+                }
+            }
+        }
+        
+        // Add shake animation and cursor blinking CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0% { transform: translateX(0); }
+                10% { transform: translateX(-6px); }
+                25% { transform: translateX(5px); }
+                35% { transform: translateX(-4px); }
+                50% { transform: translateX(3px); }
+                65% { transform: translateX(-2px); }
+                80% { transform: translateX(1px); }
+                100% { transform: translateX(0); }
+            }
+
+            @keyframes blink {
+                0%, 50% { opacity: 1; }
+                51%, 100% { opacity: 0; }
+            }
+
+            #license-code {
+                caret-color: transparent;
+                transition: text-indent 0.2s ease-out;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Global page transition functions
+        function initPageTransition() {
+            const transition = document.getElementById('pageTransition');
+            const content = document.getElementById('pageContent');
+            
+            // Ensure page is fully loaded before fading in
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    transition.style.opacity = '0';
+                    content.style.opacity = '1';
+                    setTimeout(() => {
+                        transition.style.pointerEvents = 'none';
+                    }, 400);
+                }, 100); // Small delay to ensure everything is rendered
+            });
+            
+            // Also handle DOMContentLoaded as fallback
+            if (document.readyState === 'complete') {
+                setTimeout(() => {
+                    transition.style.opacity = '0';
+                    content.style.opacity = '1';
+                    setTimeout(() => {
+                        transition.style.pointerEvents = 'none';
+                    }, 400);
+                }, 100);
+            }
+        }
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            initPageTransition();
+            new AccessApp();
+            
+            // Initialize smooth gliding cursor
+            const licenseInput = document.getElementById('license-code');
+            if (licenseInput) {
+                new SmoothCursor(licenseInput, 250);
+            }
+        });
+    </script>
+</body>
+</html>

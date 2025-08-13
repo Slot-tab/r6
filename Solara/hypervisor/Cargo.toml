@@ -1,0 +1,55 @@
+[package]
+name = "solara-hypervisor"
+version = "0.1.0"
+edition = "2021"
+authors = ["Solara Team"]
+description = "VMX hypervisor with HWID spoofing and BattlEye evasion"
+
+[dependencies]
+tokio = { version = "1.0", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+bitflags = "2.0"
+fastrand = "2.0"
+num_cpus = "1.0"
+futures = "0.3"
+obfstr = "0.4"
+litcrypt = "0.4"
+windows = { version = "0.48", features = [
+    "Win32_Foundation",
+    "Win32_System_Threading",
+    "Win32_System_SystemInformation",
+    "Win32_System_Diagnostics_Debug",
+    "Win32_System_Memory",
+    "Win32_Security",
+    "Win32_System_Registry"
+]}
+winapi = { version = "0.3", features = [
+    "winnt",
+    "memoryapi",
+    "processthreadsapi",
+    "sysinfoapi",
+    "winreg"
+]}
+
+[profile.release]
+panic = "abort"
+lto = "fat"
+codegen-units = 1
+opt-level = "z"
+strip = "symbols"
+debug = false
+debug-assertions = false
+overflow-checks = false
+incremental = false
+rpath = false
+
+[profile.release.package."*"]
+opt-level = "z"
+debug = false
+
+[profile.dev]
+panic = "abort"
