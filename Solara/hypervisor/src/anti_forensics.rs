@@ -631,9 +631,9 @@ pub enum LogFormat {
 
 #[derive(Debug, Clone)]
 pub struct DnsHijacking {
-    pub enabled: bool,
-    pub target_domains: Vec<String>,
-    pub redirect_ip: String,
+    pub dns_servers: Vec<String>,
+    pub dns_cache_manipulation: DnsCacheManipulation,
+    pub hosts_file_manipulation: HostsFileManipulation,
 }
 
 #[derive(Debug, Clone)]
@@ -644,8 +644,9 @@ pub struct HostsFileManipulation {
 
 #[derive(Debug, Clone)]
 pub struct ProxyManipulation {
-    pub enabled: bool,
     pub proxy_settings: ProxySettings,
+    pub pac_file_manipulation: PacFileManipulation,
+    pub transparent_proxy: TransparentProxy,
 }
 
 #[derive(Debug, Clone)]
@@ -675,8 +676,9 @@ pub struct TransparentProxy {
 
 #[derive(Debug, Clone)]
 pub struct WinsockHijacking {
-    pub enabled: bool,
-    pub target_functions: Vec<String>,
+    pub lsp_chain: LspChain,
+    pub winsock_hooks: Vec<String>,
+    pub socket_interception: SocketInterception,
 }
 
 #[derive(Debug, Clone)]
@@ -700,14 +702,16 @@ pub struct ProtocolDatabase {
 
 #[derive(Debug, Clone)]
 pub struct TimeDistortion {
-    pub distortion_rate: f64,
-    pub max_distortion: i64,
+    pub distortion_functions: Vec<String>,
+    pub temporal_scaling: f64,
+    pub non_linear_effects: bool,
 }
 
 #[derive(Debug, Clone)]
 pub struct RhythmManipulation {
-    pub enabled: bool,
     pub rhythm_patterns: Vec<String>,
+    pub beat_variations: Vec<String>,
+    pub syncopation_rules: Vec<String>,
 }
 
 
@@ -726,20 +730,23 @@ pub struct SsdtInjection {
 
 #[derive(Debug, Clone)]
 pub struct DllHijacking {
-    pub enabled: bool,
-    pub target_dlls: Vec<String>,
+    pub hijacked_dlls: Vec<String>,
+    pub search_order_manipulation: SearchOrderManipulation,
+    pub phantom_dlls: Vec<String>,
 }
 
 #[derive(Debug, Clone)]
 pub struct ServiceHijacking {
-    pub enabled: bool,
-    pub target_services: Vec<String>,
+    pub hijacked_services: Vec<String>,
+    pub original_binaries: HashMap<String, Vec<u8>>,
+    pub proxy_services: Vec<String>,
 }
 
 #[derive(Debug, Clone)]
 pub struct FileAssociationHijacking {
-    pub enabled: bool,
-    pub associations: HashMap<String, String>,
+    pub hijacked_extensions: Vec<String>,
+    pub original_handlers: HashMap<String, String>,
+    pub handler_redirection: HandlerRedirection,
 }
 
 #[derive(Debug, Clone)]
@@ -750,14 +757,23 @@ pub struct SearchOrderManipulation {
 
 #[derive(Debug, Clone)]
 pub struct SystemFileReplacement {
-    pub enabled: bool,
-    pub target_files: Vec<String>,
+    pub replaced_files: Vec<String>,
+    pub backup_locations: HashMap<String, String>,
+    pub integrity_bypass: IntegrityBypass,
+}
+
+#[derive(Debug, Clone)]
+pub struct HijackedValue {
+    pub key: String,
+    pub original_value: Vec<u8>,
+    pub fake_value: Vec<u8>,
 }
 
 #[derive(Debug, Clone)]
 pub struct ValueHijacking {
-    pub enabled: bool,
-    pub target_values: Vec<String>,
+    pub hijacked_values: Vec<HijackedValue>,
+    pub original_values: HashMap<String, Vec<u8>>,
+    pub redirection_table: HashMap<String, String>,
 }
 
 #[derive(Debug, Clone)]
@@ -797,8 +813,9 @@ pub struct PayloadInjection {
 
 #[derive(Debug, Clone)]
 pub struct DependencyManipulation {
-    pub enabled: bool,
-    pub dependencies: Vec<String>,
+    pub dependency_chains: Vec<String>,
+    pub circular_dependencies: Vec<String>,
+    pub phantom_dependencies: Vec<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -827,88 +844,118 @@ pub struct EvasionSample {
 
 #[derive(Debug, Clone)]
 pub struct GradientMasking {
-    pub enabled: bool,
-    pub masking_rate: f32,
+    pub masking_patterns: Vec<String>,
+    pub masking_intensity: f32,
+    pub adaptive_masking: bool,
 }
 
 #[derive(Debug, Clone)]
 pub struct NoiseParameters {
-    pub noise_level: f32,
-    pub distribution: String,
+    pub amplitude: f32,
+    pub frequency: f32,
+    pub phase: f32,
+    pub correlation: f32,
 }
 
 #[derive(Debug, Clone)]
 pub struct PatternLibrary {
-    pub patterns: Vec<String>,
+    pub legitimate_patterns: Vec<String>,
+    pub synthetic_patterns: Vec<String>,
+    pub pattern_metadata: HashMap<String, String>,
 }
 
 #[derive(Debug, Clone)]
 pub struct SyntheticDataGenerator {
-    pub enabled: bool,
-    pub generation_rules: Vec<String>,
+    pub generation_models: Vec<String>,
+    pub data_distributions: Vec<String>,
+    pub realism_metrics: RealismMetrics,
 }
 
 #[derive(Debug, Clone)]
 pub struct LabelManipulation {
-    pub enabled: bool,
-    pub manipulation_rules: Vec<String>,
+    pub manipulation_strategies: Vec<String>,
+    pub target_classes: Vec<String>,
+    pub flip_probabilities: HashMap<String, f32>,
 }
 
 #[derive(Debug, Clone)]
 pub struct ConstraintSatisfaction {
     pub constraints: Vec<String>,
+    pub satisfaction_algorithms: Vec<String>,
+    pub constraint_relaxation: ConstraintRelaxation,
+}
+
+#[derive(Debug, Clone)]
+pub enum PenaltyFunction {
+    Linear,
+    Quadratic,
+    Exponential,
+    Logarithmic,
 }
 
 #[derive(Debug, Clone)]
 pub struct ConstraintRelaxation {
-    pub relaxation_rate: f32,
+    pub relaxation_factor: f32,
+    pub adaptive_relaxation: bool,
+    pub penalty_function: PenaltyFunction,
 }
 
 #[derive(Debug, Clone)]
 pub struct OptimizationInterference {
-    pub enabled: bool,
     pub interference_methods: Vec<String>,
+    pub convergence_disruption: ConvergenceDisruption,
+    pub local_minima_traps: Vec<String>,
 }
 
 #[derive(Debug, Clone)]
 pub struct ConvergenceDisruption {
-    pub enabled: bool,
-    pub disruption_rate: f32,
+    pub disruption_frequency: f32,
+    pub disruption_magnitude: f32,
+    pub adaptive_disruption: bool,
 }
 
 #[derive(Debug, Clone)]
 pub struct MagnitudeControl {
-    pub max_magnitude: f32,
-    pub min_magnitude: f32,
+    pub epsilon_values: Vec<f32>,
+    pub adaptive_scaling: bool,
+    pub perceptual_constraints: PerceptualConstraints,
 }
 
 #[derive(Debug, Clone)]
 pub struct PerceptualConstraints {
-    pub constraints: Vec<String>,
+    pub visual_similarity: f32,
+    pub semantic_preservation: f32,
+    pub functional_equivalence: f32,
 }
 
 #[derive(Debug, Clone)]
 pub struct QualityMetrics {
-    pub metrics: HashMap<String, f32>,
+    pub similarity_threshold: f32,
+    pub imperceptibility_score: f32,
+    pub robustness_measure: f32,
 }
 
 #[derive(Debug, Clone)]
 pub struct RealismMetrics {
-    pub realism_score: f32,
-    pub validation_methods: Vec<String>,
+    pub fid_score: f32,
+    pub inception_score: f32,
+    pub lpips_distance: f32,
 }
 
 
 
 #[derive(Debug, Clone)]
 pub struct IndependenceMetrics {
-    pub metrics: Vec<f32>,
+    pub mutual_information: f32,
+    pub correlation_coefficient: f32,
+    pub chi_square_statistic: f32,
 }
 
 #[derive(Debug, Clone)]
 pub struct SeedManagement {
-    pub seeds: Vec<u64>,
-    pub rotation_enabled: bool,
+    pub seed_rotation_interval: u64,
+    pub seed_sources: Vec<String>,
+    pub seed_mixing: bool,
 }
 
 /// Value type
@@ -1734,13 +1781,13 @@ impl PlausibilityChecker {
 static mut ANTI_FORENSICS: Option<AntiForensics> = None;
 
 /// Initialize global anti-forensics system
-pub fn init_anti_forensics() -> Result<(), String> {
+pub fn init_anti_forensics() -> Result<()> {
     unsafe {
         if ANTI_FORENSICS.is_none() {
             ANTI_FORENSICS = Some(AntiForensics::new()?);
             Ok(())
         } else {
-            Err(obfstr!("Anti-forensics already initialized").to_string())
+            Err(anyhow::anyhow!("Anti-forensics already initialized"))
         }
     }
 }

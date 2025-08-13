@@ -1345,7 +1345,7 @@ impl HardwareSpoofing {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct SpoofingStatistics {
     pub is_initialized: bool,
     pub is_active: bool,
@@ -1355,6 +1355,21 @@ pub struct SpoofingStatistics {
     pub tmp_data_entries_count: usize,
     pub tmp_hooks_count: usize,
     pub tmp_total_accesses: u32,
+}
+
+impl SpoofingStatistics {
+    /// Get a statistic value by key
+    pub fn get(&self, key: &str) -> Option<u32> {
+        match key {
+            "hwid_total_accesses" => Some(self.hwid_total_accesses),
+            "tmp_total_accesses" => Some(self.tmp_total_accesses),
+            "hwid_identifiers_count" => Some(self.hwid_identifiers_count as u32),
+            "hwid_hooks_count" => Some(self.hwid_hooks_count as u32),
+            "tmp_data_entries_count" => Some(self.tmp_data_entries_count as u32),
+            "tmp_hooks_count" => Some(self.tmp_hooks_count as u32),
+            _ => None,
+        }
+    }
 }
 
 impl Default for HardwareSpoofing {

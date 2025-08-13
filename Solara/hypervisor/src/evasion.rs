@@ -561,6 +561,46 @@ impl UnifiedEvasionSystem {
         info!("Unified evasion system cleanup completed");
         Ok(())
     }
+
+    /// Check if the unified evasion system is active
+    pub async fn is_active(&self) -> Result<bool> {
+        let state = self.evasion_state.lock().await;
+        Ok(state.is_active)
+    }
+
+    /// Get detection statistics
+    pub async fn get_detection_stats(&self) -> Result<DetectionStats> {
+        let state = self.evasion_state.lock().await;
+        Ok(DetectionStats {
+            total_attempts: state.detection_counters.values().sum(),
+            blocked_attempts: state.evasion_statistics.total_detection_attempts_blocked as u32,
+            last_attempt_time: state.evasion_statistics.last_detection_attempt,
+            detection_vectors: state.detection_counters.clone(),
+        })
+    }
+
+    /// Deactivate the unified evasion system
+    pub async fn deactivate(&mut self) -> Result<()> {
+        let mut state = self.evasion_state.lock().await;
+        
+        if !state.is_active {
+            return Ok(());
+        }
+
+        info!("Deactivating unified evasion system");
+
+        // Deactivate all subsystems
+        {
+            let mut basic = self.basic_evasion.lock().await;
+            if let Err(e) = basic.deactivate().await {
+                warn!("Failed to deactivate basic evasion: {}", e);
+            }
+        }
+
+        state.is_active = false;
+        info!("Unified evasion system deactivated");
+        Ok(())
+    }
 }
 
 // ============================================================================
