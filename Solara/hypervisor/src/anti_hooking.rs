@@ -81,19 +81,32 @@ impl AntiHooking {
 
     /// Initialize database of original functions
     fn initialize_function_database(&mut self) -> Result<(), String> {
+        let nt_create_file = obfstr!("NtCreateFile").to_string();
+        let nt_read_vm = obfstr!("NtReadVirtualMemory").to_string();
+        let nt_write_vm = obfstr!("NtWriteVirtualMemory").to_string();
+        let nt_query_sys = obfstr!("NtQuerySystemInformation").to_string();
+        let nt_set_info = obfstr!("NtSetInformationProcess").to_string();
+        let create_file_w = obfstr!("CreateFileW").to_string();
+        let read_proc_mem = obfstr!("ReadProcessMemory").to_string();
+        let write_proc_mem = obfstr!("WriteProcessMemory").to_string();
+        let virtual_alloc = obfstr!("VirtualAlloc").to_string();
+        let virtual_protect = obfstr!("VirtualProtect").to_string();
+        let load_library_w = obfstr!("LoadLibraryW").to_string();
+        let get_proc_address = obfstr!("GetProcAddress").to_string();
+        
         let critical_functions = [
-            obfstr!("NtCreateFile"),
-            obfstr!("NtReadVirtualMemory"),
-            obfstr!("NtWriteVirtualMemory"),
-            obfstr!("NtQuerySystemInformation"),
-            obfstr!("NtSetInformationProcess"),
-            obfstr!("CreateFileW"),
-            obfstr!("ReadProcessMemory"),
-            obfstr!("WriteProcessMemory"),
-            obfstr!("VirtualAlloc"),
-            obfstr!("VirtualProtect"),
-            obfstr!("LoadLibraryW"),
-            obfstr!("GetProcAddress"),
+            nt_create_file.as_str(),
+            nt_read_vm.as_str(),
+            nt_write_vm.as_str(),
+            nt_query_sys.as_str(),
+            nt_set_info.as_str(),
+            create_file_w.as_str(),
+            read_proc_mem.as_str(),
+            write_proc_mem.as_str(),
+            virtual_alloc.as_str(),
+            virtual_protect.as_str(),
+            load_library_w.as_str(),
+            get_proc_address.as_str(),
         ];
 
         for func_name in &critical_functions {

@@ -282,8 +282,64 @@ impl StealthSystem {
         state.stealth_features.insert(StealthFeature::BranchPredictionNormalization, true);
         state.stealth_features.insert(StealthFeature::TlbFlushMinimization, true);
         
-        info!("Stealth features initialized");
+        info!("Stealth measures enhanced");
         Ok(())
+    }
+
+    /// Deactivate stealth system
+    pub async fn deactivate(&mut self) -> Result<()> {
+        info!("Deactivating stealth system");
+        
+        // Deactivate all stealth features
+        if let Ok(mut state) = self.state.lock() {
+            state.active_features.clear();
+            state.stealth_active = false;
+        }
+        
+        info!("Stealth system deactivated");
+        Ok(())
+    }
+
+    /// Cleanup stealth system resources
+    pub async fn cleanup(&mut self) -> Result<()> {
+        info!("Cleaning up stealth system");
+        
+        // First deactivate if still active
+        self.deactivate().await?;
+        
+        // Clear all data structures
+        if let Ok(mut state) = self.state.lock() {
+            state.timing_data = None;
+            state.footprint_data = None;
+            state.active_features.clear();
+        }
+        
+        info!("Stealth system cleanup completed");
+        Ok(())
+    }
+
+    /// Normalize instruction timing to avoid detection
+    pub async fn normalize_instruction_timing(&self, instruction: &str, cycles: u64) -> Result<u64> {
+        debug!("Normalizing timing for instruction: {} ({} cycles)", instruction, cycles);
+        
+        // Get baseline timing for this instruction type
+        let baseline = match instruction {
+            "CPUID" => 150,
+            "RDTSC" => 20,
+            "VMCALL" => 200,
+            "RDMSR" => 100,
+            "WRMSR" => 120,
+            _ => cycles, // Use provided cycles as baseline for unknown instructions
+        };
+        
+        // Add small random variance to make timing look natural
+        let variance = (baseline as f64 * 0.1) as u64; // 10% variance
+        let random_offset = (cycles % 10).saturating_sub(5); // Simple pseudo-random offset
+        
+        let normalized = baseline.saturating_add(variance).saturating_add(random_offset);
+        
+        debug!("Normalized {} cycles to {} cycles", cycles, normalized);
+        Ok(normalized)
     }
 
     /// Setup timing normalization
@@ -526,33 +582,84 @@ impl StealthSystem {
 
     /// Enhance stealth measures (called when detection attempts are detected)
     pub async fn enhance_stealth(&mut self) -> Result<()> {
-        let mut state = self.stealth_state.lock().await;
+        info!("Enhancing stealth measures");
         
-        if !state.is_active {
-            return Err(anyhow::anyhow!("Stealth system not active"));
+        // Re-randomize memory layout
+        if let Ok(mut state) = self.state.lock() {
+            self.setup_memory_randomization(&mut state)?;
         }
-
-        info!("Enhancing stealth measures due to detection attempts");
         
-        // Increase timing variance to make detection harder
-        state.timing_data.timing_variance = (state.timing_data.timing_variance * 1.5).min(0.2); // Cap at 20%
+        // Activate additional stealth features
+        self.activate_stealth_feature(&StealthFeature::VmexitMinimization)?;
+        self.activate_stealth_feature(&StealthFeature::CacheAlignment)?;
+        self.activate_stealth_feature(&StealthFeature::BranchPredictionNormalization)?;
+        self.activate_stealth_feature(&StealthFeature::TlbFlushMinimization)?;
         
-        // Regenerate randomized addresses
-        drop(state); // Release lock
-        let mut temp_state = self.stealth_state.lock().await;
-        self.generate_randomized_addresses(&mut temp_state.footprint_data).await?;
-        
-        // Re-activate all stealth features with enhanced settings
-        for (feature, enabled) in &temp_state.stealth_features.clone() {
-            if *enabled {
-                drop(temp_state); // Release lock for async call
-                self.activate_stealth_feature(feature).await?;
-                temp_state = self.stealth_state.lock().await; // Re-acquire lock
+        // Update timing baselines
+        if let Ok(mut state) = self.state.lock() {
+            if let Some(timing_data) = &mut state.timing_data {
+                self.collect_baseline_timings(timing_data)?;
             }
         }
         
         info!("Stealth measures enhanced successfully");
         Ok(())
+    }
+
+    /// Deactivate stealth system
+    pub async fn deactivate(&mut self) -> Result<()> {
+        info!("Deactivating stealth system");
+        
+        // Deactivate all stealth features
+        if let Ok(mut state) = self.state.lock() {
+            state.active_features.clear();
+            state.stealth_active = false;
+        }
+        
+        info!("Stealth system deactivated");
+        Ok(())
+    }
+
+    /// Cleanup stealth system resources
+    pub async fn cleanup(&mut self) -> Result<()> {
+        info!("Cleaning up stealth system");
+        
+        // First deactivate if still active
+        self.deactivate().await?;
+        
+        // Clear all data structures
+        if let Ok(mut state) = self.state.lock() {
+            state.timing_data = None;
+            state.footprint_data = None;
+            state.active_features.clear();
+        }
+        
+        info!("Stealth system cleanup completed");
+        Ok(())
+    }
+
+    /// Normalize instruction timing to avoid detection
+    pub async fn normalize_instruction_timing(&self, instruction: &str, cycles: u64) -> Result<u64> {
+        debug!("Normalizing timing for instruction: {} ({} cycles)", instruction, cycles);
+        
+        // Get baseline timing for this instruction type
+        let baseline = match instruction {
+            "CPUID" => 150,
+            "RDTSC" => 20,
+            "VMCALL" => 200,
+            "RDMSR" => 100,
+            "WRMSR" => 120,
+            _ => cycles, // Use provided cycles as baseline for unknown instructions
+        };
+        
+        // Add small random variance to make timing look natural
+        let variance = (baseline as f64 * 0.1) as u64; // 10% variance
+        let random_offset = (cycles % 10).saturating_sub(5); // Simple pseudo-random offset
+        
+        let normalized = baseline.saturating_add(variance).saturating_add(random_offset);
+        
+        debug!("Normalized {} cycles to {} cycles", cycles, normalized);
+        Ok(normalized)
     }
 }
 
@@ -747,13 +854,20 @@ impl AntiHooking {
 
     /// Initialize database of original functions
     fn initialize_function_database(&mut self) -> Result<(), String> {
+        let nt_create_file = obfstr!("NtCreateFile").to_string();
+        let nt_read_vm = obfstr!("NtReadVirtualMemory").to_string();
+        let nt_write_vm = obfstr!("NtWriteVirtualMemory").to_string();
+        let nt_query_sys = obfstr!("NtQuerySystemInformation").to_string();
+        let virtual_alloc = obfstr!("VirtualAlloc").to_string();
+        let virtual_protect = obfstr!("VirtualProtect").to_string();
+        
         let critical_functions = [
-            obfstr!("NtCreateFile"),
-            obfstr!("NtReadVirtualMemory"),
-            obfstr!("NtWriteVirtualMemory"),
-            obfstr!("NtQuerySystemInformation"),
-            obfstr!("VirtualAlloc"),
-            obfstr!("VirtualProtect"),
+            nt_create_file.as_str(),
+            nt_read_vm.as_str(),
+            nt_write_vm.as_str(),
+            nt_query_sys.as_str(),
+            virtual_alloc.as_str(),
+            virtual_protect.as_str(),
         ];
 
         for func_name in &critical_functions {

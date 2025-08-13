@@ -493,10 +493,14 @@ impl NetworkObfuscation {
     /// Check if steganography should be used
     fn should_use_steganography(&self, destination: &str) -> bool {
         // Use steganography for high-risk destinations
+        let ubisoft_domain = obfstr!("ubisoft.com").to_string();
+        let battleye_domain = obfstr!("battleye.com").to_string();
+        let eac_domain = obfstr!("easyanticheat.net").to_string();
+        
         let high_risk_domains = [
-            obfstr!("ubisoft.com"),
-            obfstr!("battleye.com"),
-            obfstr!("easyanticheat.net"),
+            ubisoft_domain.as_str(),
+            battleye_domain.as_str(),
+            eac_domain.as_str(),
         ];
 
         high_risk_domains.iter().any(|&domain| destination.contains(domain))
